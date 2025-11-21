@@ -1,23 +1,99 @@
-#AI/ML Intern Assignment
+# Trigram Language Model – Assignment Submission
 
-Welcome to the AI/ML Intern assignment! This project is designed to test your core Python skills and your ability to design and build a clean and efficient system from scratch.
+This project is my implementation of a simple Trigram (N=3) Language Model for the Desible AI/ML Intern Assignment.
 
-## Quick Start
+The goal of the project is to:
+- Clean and process text
+- Build trigram counts
+- Learn word-to-word transitions
+- Generate new text using probabilistic sampling
+- Handle edge cases like empty text and short text
+- Pass all provided tests
 
-1. Clone or fork this repository.
-2. Install the required dependencies: `pip install -r requirements.txt`
-3. Open the trigram-assignment/src/ngram_model.py file and implement the TrigramModel class.
-4. Run the tests to check your implementation: `pytest trigram-assignment/tests/test_ngram.py`
+I have implemented the complete TrigramModel from scratch inside `src/ngram_model.py`.
+
+---
+
+## 🛠 How I Set Up and Ran the Project
+
+### 1. Created a virtual environment
+
+python3 -m venv .venv
+source .venv/bin/activate
 
 
-## Instructions
-
-1. Any changes to env should be updated in `requirements.txt`.
-2. Mention the steps to run your code in `trigram-assignment/README.md`.
-3. Feel free to make any changes to the existing code.
-4. Please document your design choices in the `evaluation.md` file. This should be a 1-page summary of the decisions you made and why you made them. And all the steps to for us to test.
-5. Please mind the second task is optional.
+### 2. Installed the dependencies
 
 
+pip install -r requirements.txt
 
-For more detailed instructions, please refer to the `ASSIGNMENT.md` file.
+
+The only dependency required was `pytest`.
+
+---
+
+## 🚀 How to Run the Model
+
+### To train the model and generate text:
+
+
+python src/generate.py
+
+
+This script:
+- Loads the example text from `data/example_corpus.txt`
+- Fits the trigram model
+- Prints generated text to the terminal
+
+---
+
+## 🧪 Running Tests
+
+The assignment includes tests to check whether the TrigramModel works correctly.
+
+To run all tests:
+
+
+pytest tests/test_ngram.py
+
+
+All tests pass successfully after the implementation.
+
+---
+
+## 📂 Project Structure
+
+
+
+ml-assignment/
+├── data/
+│ └── example_corpus.txt
+│
+├── src/
+│ ├── ngram_model.py # Main implementation of TrigramModel
+│ ├── generate.py # Script to train + generate text
+│ └── utils.py # Optional helper functions
+│
+├── tests/
+│ └── test_ngram.py # Unit tests provided in assignment
+│
+└── evaluation.md # My written explanation of design choices
+
+---
+## ✨ What I Implemented
+
+- Cleaned the input text (lowercasing, removing punctuation)
+- Tokenized sentences and added start/end padding
+- Built nested dictionaries to store trigram counts
+- Implemented probabilistic sampling for text generation
+- Handled empty-text and short-text edge cases properly
+- Ensured compatibility with all test cases
+
+---
+
+## ✔ Current Status
+
+- Trigram model fully implemented
+- All tests are passing (`3 passed`)
+- Code is clean, simple, and easy to understand
+- Ready to submit
