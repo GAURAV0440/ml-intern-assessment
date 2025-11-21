@@ -1,122 +1,149 @@
 # Evaluation – Trigram Language Model
 
-This document explains the design choices I made while implementing the Trigram (N=3) Language Model for the AI/ML Intern Assignment. I built everything from scratch using only Python and simple data structures.
+This document explains the design choices I made while implementing the Trigram (N=3) Language Model for the AI/ML Intern Assignment.  
+The entire solution is written from scratch using Python and simple data structures.
 
 ---
 
-## 1. How I Stored N-Gram Counts
+## 1. N-Gram Count Storage
 
-I used a nested dictionary structure:
+I stored trigram counts using a nested dictionary:
 
+```python
 self.trigrams[w1][w2][w3] = count
+```
 
-To make this easier, I used `defaultdict` from Python’s collections module:
+To simplify initialization, I used Python’s `defaultdict`, so keys create themselves automatically.
 
-- The first key is the first word (w1)
-- The second key is the second word (w2)
-- The final key is the possible next word (w3)
-- The value is the count of how many times the trigram appears
+Structure:
 
-This structure is simple, efficient, and perfect for fast lookup during generation.
+- `w1` → first word  
+- `w2` → second word  
+- `w3` → predicted next word  
+- **value** → frequency of that trigram  
+
+This structure is efficient and perfect for quick lookup during text generation.
 
 ---
 
-## 2. Text Cleaning and Tokenization
+## 2. Text Cleaning & Tokenization
 
-I cleaned the text in the following steps:
+My `clean_and_tokenize()` function performs:
 
-1. Converted everything to **lowercase**
-2. Removed punctuation except periods (`.`) because periods help identify sentence endings
-3. Split the text into sentences using the period
+1. Convert text to **lowercase**  
+2. Remove punctuation (except `"."`, which marks sentence boundaries)  
+3. Split text into sentences using `"."`  
 4. Split each sentence into words
 
-I wrote a helper method `clean_and_tokenize()` that returns a list of tokenized sentences.
-
 Example:
 
-
+```text
 "I am happy. You are here."
 → [["i", "am", "happy"], ["you", "are", "here"]]
+```
 
+This gives a clean list of tokenized sentences.
 
 ---
 
-## 3. Padding Sentences
+## 3. Sentence Padding
 
-Each sentence was padded with:
+Padding helps the model learn valid sentence openings.
 
-- `"<s>"` twice at the beginning  
+Each sentence is padded with:
+
+- `"<s>"` twice at the start  
 - `"</s>"` once at the end  
-
-This makes trigram formation easier and ensures the model knows how sentences start and end.
 
 Example:
 
+```text
 <s> <s> i am happy </s>
+```
 
-Padding lets the model learn valid sentence openings like:
+Padding enables the model to learn sequences like:
 
-<s> <s> i
-<s> i am
+- `<s> <s> i`
+- `<s> i am`
+
+This is essential for realistic text generation.
 
 ---
 
-## 4. Handling Unknown, Empty, and Short Text
+## 4. Handling Empty, Unknown & Short Text
 
-- If the input text is empty, I simply mark the model as **not trained**.
-- If the model isn’t trained, `generate()` returns an **empty string**.
-- This ensures the tests for empty text and short text pass without errors.
-- Short sentences still get padded, so they work normally.
+To avoid errors:
+
+- If input text is empty → mark the model as **not trained**
+- If model is not trained → `generate()` returns an **empty string**
+- Short sentences still get padded correctly
+- This ensures all edge-case tests pass smoothly
+
+This makes the model robust and predictable.
 
 ---
 
 ## 5. Trigram Counting
 
-After padding each sentence, I looped through it:
+After padding each sentence, I extract trigrams by sliding a window:
 
+```python
 for i in range(len(padded) - 2):
-(w1, w2, w3)
+    w1, w2, w3 = padded[i], padded[i+1], padded[i+2]
+```
 
-Each trigram is counted and stored in the nested dictionary.
+Each trigram is counted and stored inside the nested dictionary.
 
 ---
 
-## 6. Generating Text (Probabilistic Sampling)
+## 6. Text Generation (Probabilistic Sampling)
 
 To generate text:
 
-1. Start with:
+1. Start from the initial state:
+   ```python
+   w1 = "<s>"
+   w2 = "<s>"
+   ```
+2. Look up all possible next words  
+3. Convert counts → probabilities  
+4. Sample the next word using:
+   ```python
+   random.choices(words, probabilities)
+   ```
+5. Stop when:
+   - The model predicts `"</s>"`  
+   - Or `max_length` is reached  
 
-w1 = "<s>"
-w2 = "<s>"
-
-2. Look up all possible next words from the trigram dictionary
-3. Convert trigram counts → probabilities
-4. Use `random.choices()` to sample the next word based on probability
-5. Stop generating when:
-- The model predicts `"</s>"`
-- Or we reach `max_length`
-
-This makes the generation non-deterministic and more natural.
-
----
-
-## 7. Why These Choices?
-
-- **defaultdict** → easy, readable, avoids key errors  
-- **Simple regex cleaning** → enough for assignment, avoids complexity  
-- **Padding** → essential for good sentence starts  
-- **Probability-based sampling** → better than picking the largest count  
-- **Graceful handling of empty input** → required to pass tests  
-- **Small and clean codebase** → easy to understand and review  
+This produces non-deterministic but natural-looking sentences.
 
 ---
 
-## 8. Result
+## 7. Why These Design Choices?
 
-- All 3 test cases passed successfully  
-- The model trains correctly on the sample corpus  
-- Text generation works and produces meaningful outputs  
-- Code is simple, readable, and fully meets assignment guidelines  
+- **defaultdict**  
+  Cleaner code, no need for key existence checks  
+- **Simple regex cleaning**  
+  Enough for assignment; avoids over-engineering  
+- **Padding**  
+  Required for realistic sentence beginnings  
+- **Probabilistic sampling**  
+  More natural than always picking the maximum count  
+- **Graceful handling of empty input**  
+  Ensures tests pass and avoids crashes  
+- **Minimal, readable code**  
+  Easy to evaluate and maintain  
 
-This completes the implementation of the Trigram Language Model.
+---
+
+## 8. Result Summary
+
+- All **3 provided tests** passed successfully  
+- Trigram counts are built correctly  
+- Generation produces meaningful outputs  
+- Code meets assignment requirements fully  
+- The system behaves correctly for empty and short inputs  
+
+---
+
+This completes my implementation and evaluation of the Trigram Language Model.
